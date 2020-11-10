@@ -2,9 +2,8 @@ pragma solidity >=0.4.22 <0.7.0;
 
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
 
+contract Allowance is Ownable {
 
-contract SimpleWallet is Ownable {
-    
     mapping(address => uint) public allowance;
     
     function addAllowance(address _who, uint _amount) public onlyOwner {
@@ -19,7 +18,11 @@ contract SimpleWallet is Ownable {
     function reduceAllowance(address _who, uint _amount) internal {
         allowance[_who] -= _amount;
     }
+}
 
+
+contract SimpleWallet is Allowance {
+    
     function withdrawMoneyTo(address payable _to, uint _amount) public ownerOrAllowed(_amount) {
         require(_amount <= address(this).balance, "You don't have enough funds stored in the smart contract");
         if(owner() != msg.sender) {
